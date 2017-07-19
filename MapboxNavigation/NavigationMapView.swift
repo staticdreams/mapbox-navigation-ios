@@ -47,10 +47,12 @@ open class NavigationMapView: MGLMapView, CLLocationManagerDelegate {
             // didUpdateLocationWithUserTrackingAnimated
             // didUpdateLocationIncrementallyAnimated
             // TODO: Call setVisibleCoordinateBounds instead to account for the location view’s bottom-weighted position on-screen.
-            setCenter(location.coordinate, zoomLevel: zoomLevel, direction: location.course, animated: false, completionHandler: nil)
+            let camera = MGLMapCamera(lookingAtCenter: location.coordinate, fromDistance: 300, pitch: 45, heading: location.course)
+            setCamera(camera, animated: true)
             
             // updateUserLocationAnnotationViewAnimatedWithDuration
             if let userCourseView = userCourseView {
+                userCourseView.update(location: location, pitch: camera.pitch, direction: direction, animated: false)
                 userCourseView.center = userCourseViewCenter
             }
         }
@@ -63,8 +65,7 @@ open class NavigationMapView: MGLMapView, CLLocationManagerDelegate {
                 showsUserLocation = false
                 
                 if userCourseView == nil {
-                    let image = UIImage(named: "location", in: .mapboxNavigation, compatibleWith: nil)
-                    userCourseView = UIImageView(image: image)
+                    userCourseView = UserCourseView()
                     addSubview(userCourseView!)
                 }
                 userCourseView?.isHidden = false
@@ -76,7 +77,7 @@ open class NavigationMapView: MGLMapView, CLLocationManagerDelegate {
         }
     }
     
-    var userCourseView: UIView?
+    var userCourseView: UserCourseView?
     
     var userCourseViewCenter: CGPoint {
         var edgePaddingForFollowingWithCourse = UIEdgeInsets(top: 50, left: 0, bottom: 50, right: 0)
