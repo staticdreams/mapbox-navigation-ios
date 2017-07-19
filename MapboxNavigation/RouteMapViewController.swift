@@ -61,7 +61,6 @@ class RouteMapViewController: UIViewController {
         
         mapView.delegate = self
         mapView.navigationMapDelegate = self
-        mapView.manuallyUpdatesLocation = true
         
         overviewButton.applyDefaultCornerRadiusShadow(cornerRadius: 20)
         recenterButton.applyDefaultCornerRadiusShadow()
@@ -93,7 +92,7 @@ class RouteMapViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        mapView.setUserTrackingMode(.followWithCourse, animated: false)
+        mapView.tracksUserCourse = true
         mapView.setUserLocationVerticalAlignment(.bottom, animated: false)
         mapView.setContentInset(contentInsets, animated: false)
         
@@ -102,7 +101,7 @@ class RouteMapViewController: UIViewController {
 
     @IBAction func recenter(_ sender: AnyObject) {
         mapView.setCamera(tiltedCamera, animated: false)
-        mapView.userTrackingMode = .followWithCourse
+        mapView.tracksUserCourse = true
 
         // Recenter also resets the current page. Same behavior as rerouting.
         routePageViewController.notifyDidReRoute()
@@ -112,7 +111,7 @@ class RouteMapViewController: UIViewController {
         if isInOverviewMode {
             overviewButton.isHidden = false
             mapView.setCamera(tiltedCamera, animated: false)
-            mapView.setUserTrackingMode(.followWithCourse, animated: true)
+            mapView.tracksUserCourse = true
         } else {
             wayNameView.isHidden = true
             overviewButton.isHidden = true
@@ -157,7 +156,7 @@ class RouteMapViewController: UIViewController {
     }
 
     func trackingModeTimerDone() {
-        mapView.userTrackingMode = .followWithCourse
+        mapView.tracksUserCourse = true
     }
 
     func notifyDidReroute(route: Route) {
@@ -168,7 +167,7 @@ class RouteMapViewController: UIViewController {
         if isInOverviewMode {
             updateVisibleBounds(coordinates: routeController.routeProgress.route.coordinates!)
         } else {
-            mapView.userTrackingMode = .followWithCourse
+            mapView.tracksUserCourse = true
             wayNameView.isHidden = true
         }
     }
@@ -272,13 +271,11 @@ extension RouteMapViewController: NavigationMapViewDelegate {
     func mapViewDidFinishLoadingMap(_ mapView: MGLMapView) {
         hasFinishedLoadingMap = true
     }
-
-    @objc(navigationMapView:shouldUpdateTo:)
-    func navigationMapView(_ mapView: NavigationMapView, shouldUpdateTo location: CLLocation) -> CLLocation? {
-
-        guard routeController.userIsOnRoute(location) else { return nil }
-        guard let stepCoordinates = routeController.routeProgress.currentLegProgress.currentStep.coordinates else  { return nil }
-        guard let snappedCoordinate = closestCoordinate(on: stepCoordinates, to: location.coordinate) else { return location }
+    
+    func updateLabels(for location: CLLocation) {
+        guard routeController.userIsOnRoute(location) else { return }
+        guard let stepCoordinates = routeController.routeProgress.currentLegProgress.currentStep.coordinates else { return }
+        guard let snappedCoordinate = closestCoordinate(on: stepCoordinates, to: location.coordinate) else { return }
 
         // Add current way name to UI
         if let style = mapView.style, recenterButton.isHidden && hasFinishedLoadingMap {
@@ -354,7 +351,13 @@ extension RouteMapViewController: NavigationMapViewDelegate {
                 wayNameView.isHidden = true
             }
         }
-        
+    }
+
+    func locationForCourseTracking(derivedFrom location: CLLocation) -> CLLocation? {
+
+        guard routeController.userIsOnRoute(location) else { return nil }
+        guard let stepCoordinates = routeController.routeProgress.currentLegProgress.currentStep.coordinates else  { return nil }
+        guard let snappedCoordinate = closestCoordinate(on: stepCoordinates, to: location.coordinate) else { return location }
         
         // Snap user and course to route
         guard routeController.snapsUserLocationAnnotationToRoute else {
@@ -405,6 +408,10 @@ extension RouteMapViewController: NavigationMapViewDelegate {
 
 extension RouteMapViewController: MGLMapViewDelegate {
     func mapView(_ mapView: MGLMapView, didChange mode: MGLUserTrackingMode, animated: Bool) {
+        var mode = mode
+        if let mapView = mapView as? NavigationMapView, mapView.tracksUserCourse {
+            mode = .followWithCourse
+        }
         if isInOverviewMode && mode != .followWithCourse {
             recenterButton.isHidden = false
             wayNameView.isHidden = true
@@ -428,7 +435,11 @@ extension RouteMapViewController: MGLMapViewDelegate {
     }
 
     func mapView(_ mapView: MGLMapView, regionDidChangeAnimated animated: Bool) {
-        if mapView.userTrackingMode == .none && !isInOverviewMode {
+        var userTrackingMode = mapView.userTrackingMode
+        if let mapView = mapView as? NavigationMapView, mapView.tracksUserCourse {
+            userTrackingMode = .followWithCourse
+        }
+        if userTrackingMode == .none && !isInOverviewMode {
             wayNameView.isHidden = true
             resetTrackingModeTimer?.invalidate()
             startResetTrackingModeTimer()
@@ -456,7 +467,9 @@ extension RouteMapViewController: MGLMapViewDelegate {
     }
 
     func mapView(_ mapView: MGLMapView, didDeselect annotation: MGLAnnotation) {
-        mapView.userTrackingMode = .followWithCourse
+        if let mapView = mapView as? NavigationMapView {
+            mapView.tracksUserCourse = true
+        }
     }
 }
 
@@ -483,7 +496,7 @@ extension RouteMapViewController: RoutePageViewControllerDelegate {
 
         if !isInOverviewMode {
             if step == routeController.routeProgress.currentLegProgress.upComingStep {
-                mapView.userTrackingMode = .followWithCourse
+                mapView.tracksUserCourse = true
             } else {
                 mapView.setCenter(step.maneuverLocation, zoomLevel: mapView.zoomLevel, direction: step.initialHeading!, animated: true, completionHandler: nil)
             }

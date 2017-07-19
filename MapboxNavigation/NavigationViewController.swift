@@ -400,7 +400,12 @@ extension NavigationViewController: RouteControllerDelegate {
     }
     
     public func routeController(_ routeController: RouteController, didUpdateLocations locations: [CLLocation]) {
-        mapViewController?.mapView.locationManager(routeController.locationManager, didUpdateLocations: locations)
+        guard let location = locations.last else {
+            return
+        }
+        
+        mapViewController?.mapView.userLocationForCourseTracking = mapViewController?.locationForCourseTracking(derivedFrom: location)
+        mapViewController?.updateLabels(for: location)
     }
 }
 
