@@ -404,7 +404,8 @@ extension NavigationViewController: RouteControllerDelegate {
             return
         }
         
-        mapViewController?.mapView.userLocationForCourseTracking = mapViewController?.locationForCourseTracking(derivedFrom: location)
+        let courseTrackingLocation = mapViewController?.locationForCourseTracking(derivedFrom: location)
+        mapViewController?.mapView.updateCourseTracking(location: courseTrackingLocation, animated: routeController.locationManager.isPluggedIn)
         mapViewController?.updateLabels(for: location)
     }
 }
