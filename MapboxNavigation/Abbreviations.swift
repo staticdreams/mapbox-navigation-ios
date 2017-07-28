@@ -38,7 +38,7 @@ extension String {
         var fittedString = self
         let stringSize = fittedString.boundingRect(with: CGSize(width: bounds.width, height: .greatestFiniteMagnitude),
                                                    options: [.usesLineFragmentOrigin, .usesFontLeading],
-                                                   attributes: [NSFontAttributeName: font], context: nil).size
+                                                   attributes: [NSAttributedStringKey.font: font], context: nil).size
         
         if stringSize.width < bounds.width && stringSize.height <= bounds.height {
             return fittedString

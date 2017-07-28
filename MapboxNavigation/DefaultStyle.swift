@@ -28,7 +28,7 @@ extension UIFont {
     // General styling
     fileprivate class var defaultPrimaryText: UIFont { get { return UIFont.systemFont(ofSize: 26) } }
     fileprivate class var defaultSecondaryText: UIFont { get { return UIFont.systemFont(ofSize: 16) } }
-    fileprivate class var defaultCellTitleLabel: UIFont { get { return UIFont.systemFont(ofSize: 28, weight: UIFontWeightMedium) } }
+	fileprivate class var defaultCellTitleLabel: UIFont { get { return UIFont.systemFont(ofSize: 28, weight: UIFont.Weight.medium) } }
 }
 
 
@@ -60,26 +60,26 @@ public class DefaultStyle: Style {
         maneuverViewBackgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
         maneuverViewHeight = 115
         
-        distanceLabelFont = .systemFont(ofSize: 26, weight: UIFontWeightMedium)
+        distanceLabelFont = .systemFont(ofSize: 26, weight: UIFont.Weight.medium)
         distanceLabelTextColor = .defaultPrimaryText
         
-        destinationLabelFont = .systemFont(ofSize: 32, weight: UIFontWeightMedium)
+        destinationLabelFont = .systemFont(ofSize: 32, weight: UIFont.Weight.medium)
         destinationLabelTextColor = .defaultPrimaryText
         
-        arrivalTimeLabelFont = .systemFont(ofSize: 18, weight: UIFontWeightMedium)
+        arrivalTimeLabelFont = .systemFont(ofSize: 18, weight: UIFont.Weight.medium)
         arrivalTimeLabelTextColor = .defaultPrimaryText
         
         // Table view (Drawer)
         headerBackgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
         
         timeRemainingLabelTextColor = .defaultPrimaryText
-        timeRemainingLabelFont = .systemFont(ofSize: 28, weight: UIFontWeightMedium)
+		timeRemainingLabelFont = .systemFont(ofSize: 28, weight: UIFont.Weight.medium)
         
         distanceRemainingLabelTextColor = .defaultPrimaryText
-        distanceRemainingLabelFont = .systemFont(ofSize: 18, weight: UIFontWeightMedium)
+        distanceRemainingLabelFont = .systemFont(ofSize: 18, weight: UIFont.Weight.medium)
         
         arrivalTimeLabelTextColor = .defaultPrimaryText
-        arrivalTimeLabelFont = .systemFont(ofSize: 18, weight: UIFontWeightMedium)
+        arrivalTimeLabelFont = .systemFont(ofSize: 18, weight: UIFont.Weight.medium)
         
         cellTitleLabelFont = .systemFont(ofSize: 17)
         cellTitleLabelTextColor = .defaultPrimaryText

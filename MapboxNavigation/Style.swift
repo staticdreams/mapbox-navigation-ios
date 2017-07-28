@@ -30,7 +30,7 @@ public class Style: NSObject {
         NotificationCenter.default.removeObserver(self)
     }
     
-    func preferredContentSizeChanged(_ notification: Notification) {
+	@objc func preferredContentSizeChanged(_ notification: Notification) {
         apply()
     }
     
@@ -410,7 +410,7 @@ public class ProgressBar: UIView { }
 /// :nodoc:
 @objc(MBLineView)
 public class LineView: UIView {
-    dynamic var lineColor: UIColor = .black {
+	@objc dynamic var lineColor: UIColor = .black {
         didSet {
             setNeedsDisplay()
             setNeedsLayout()
@@ -425,7 +425,7 @@ public class SeparatorView: UIView { }
 /// :nodoc:
 @objc(MBStylableButton)
 public class StylableButton: UIButton {
-    dynamic var textColor: UIColor = .black {
+	@objc dynamic var textColor: UIColor = .black {
         didSet {
             setTitleColor(textColor, for: .normal)
         }
@@ -436,7 +436,7 @@ public class StylableButton: UIButton {
 class ManeuverView: UIView {
     @IBOutlet weak var heightConstraint: NSLayoutConstraint!
     
-    dynamic var height: CGFloat = 100 {
+	@objc dynamic var height: CGFloat = 100 {
         didSet {
             heightConstraint.constant = height
             setNeedsUpdateConstraints()

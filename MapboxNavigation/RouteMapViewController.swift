@@ -190,7 +190,7 @@ class RouteMapViewController: UIViewController {
         resetTrackingModeTimer = Timer.scheduledTimer(timeInterval: MBSecondsBeforeResetTrackingMode, target: self, selector: #selector(trackingModeTimerDone), userInfo: nil, repeats: false)
     }
 
-    func trackingModeTimerDone() {
+	@objc func trackingModeTimerDone() {
         mapView.userTrackingMode = .followWithCourse
     }
 

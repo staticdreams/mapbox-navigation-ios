@@ -332,7 +332,7 @@ public class NavigationViewController: NavigationPulleyViewController, RouteMapV
         NotificationCenter.default.removeObserver(self, name: RouteControllerAlertLevelDidChange, object: routeController)
     }
     
-    func progressDidChange(notification: NSNotification) {
+	@objc func progressDidChange(notification: NSNotification) {
         let routeProgress = notification.userInfo![RouteControllerAlertLevelDidChangeNotificationRouteProgressKey] as! RouteProgress
         let location = notification.userInfo![RouteControllerProgressDidChangeNotificationLocationKey] as! CLLocation
         let secondsRemaining = notification.userInfo![RouteControllerProgressDidChangeNotificationSecondsRemainingOnStepKey] as! TimeInterval
@@ -341,7 +341,7 @@ public class NavigationViewController: NavigationPulleyViewController, RouteMapV
         tableViewController?.notifyDidChange(routeProgress: routeProgress)
     }
     
-    func alertLevelDidChange(notification: NSNotification) {
+	@objc func alertLevelDidChange(notification: NSNotification) {
         let routeProgress = notification.userInfo![RouteControllerAlertLevelDidChangeNotificationRouteProgressKey] as! RouteProgress
         let alertLevel = routeProgress.currentLegProgress.alertUserLevel
         
