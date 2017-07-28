@@ -50,7 +50,7 @@ open class RouteVoiceController: NSObject, AVSpeechSynthesizerDelegate, AVAudioP
     /**
      Sound to play prior to reroute. Inherits volume level from `volume`.
      */
-    public var rerouteSoundPlayer: AVAudioPlayer = try! AVAudioPlayer(data: NSDataAsset(name: "reroute-sound", bundle: .mapboxNavigation)!.data, fileTypeHint: AVFileTypeMPEGLayer3)
+	public var rerouteSoundPlayer: AVAudioPlayer = try! AVAudioPlayer(data: NSDataAsset(name: "reroute-sound", bundle: .mapboxNavigation)!.data, fileTypeHint: AVFileType.mp3.rawValue)
     
     
     /**
@@ -91,7 +91,7 @@ open class RouteVoiceController: NSObject, AVSpeechSynthesizerDelegate, AVAudioP
         NotificationCenter.default.removeObserver(self, name: RouteControllerWillReroute, object: nil)
     }
     
-    func willReroute(notification: NSNotification) {
+	@objc func willReroute(notification: NSNotification) {
         speechSynth.stopSpeaking(at: .word)
         
         guard playRerouteSound else {
@@ -140,12 +140,12 @@ open class RouteVoiceController: NSObject, AVSpeechSynthesizerDelegate, AVAudioP
         announcementTimer = Timer.scheduledTimer(timeInterval: bufferBetweenAnnouncements, target: self, selector: #selector(resetAnnouncementTimer), userInfo: nil, repeats: false)
     }
     
-    func resetAnnouncementTimer() {
+	@objc func resetAnnouncementTimer() {
         recentlyAnnouncedRouteStep = nil
         announcementTimer.invalidate()
     }
     
-    open func alertLevelDidChange(notification: NSNotification) {
+	@objc open func alertLevelDidChange(notification: NSNotification) {
         guard shouldSpeak(for: notification) == true else { return }
         
         speak(fallbackText, error: nil)
